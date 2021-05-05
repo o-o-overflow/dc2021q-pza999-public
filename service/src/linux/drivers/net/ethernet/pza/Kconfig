@@ -1,0 +1,18 @@
+# PZA Defcon Ctf 2021 network device configuration
+
+config NET_VENDOR_PZA
+       bool "PZA devices"
+       default y
+       help
+	  If you have a network (Ethernet) card belonging to this class, say Y.
+
+
+if NET_VENDOR_PZA
+
+config PZA999
+       tristate "PZA 999 support"
+       depends on PCI
+       help
+	  This driver support PZA 999 family of adapters.
+
+endif # NET_VENDOR_PZA
