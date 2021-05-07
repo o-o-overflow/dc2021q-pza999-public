@@ -1,7 +1,13 @@
 # PZA999
+**WARNING:** spoilers!
 
 This challenge presented players with a vulnerable network driver, a made-up emulated networking device (the PZA999, implemented in QEMU), and a small TFTP server. Source for the network driver was provided during the game, while QEMU and the TFTP server were given as non-stripped binaries. The goal was to compromise the remote kernel and achieve enough code execution to read /root/flag. Players could interact with the remote instance through a TFTP server listening on port 5556, this TFTP server was running as root, so compromising this service effectively would allow the player to read the flag.
 
+- Challenge release file: `service/pza999.tgz`
+- Reference exploit: `interaction/x.py`
+- PZA999 driver source: `service/src/linux/drivers/net/ethernet/pza/`
+- PZA999 emulator source: `service/src/qemu/hw/net/pza999.c`
+- zTFTPd source: `service/src/ztftpd/`
 
 ## Intended Bug
 A number of issues came together to produce a bug in the packet reassmebly logic of the driver. If a packet was sent to the device that was larger than the current descriptor the remainder of the packet data would populate the following descriptors. The last packet in the chain of descriptors would be marked with an RXEOPK flag to inform the driver that the RXEOPK descriptor represents the last descriptor in a packet. When the driver encounters a packet without the RXEOPK marked it will crawl the descriptor list until it finds a descriptor with RXEOPK, so that it can assemble all the descriptor data into an SKB (Linux sk_buff) and send it up the network stack.
